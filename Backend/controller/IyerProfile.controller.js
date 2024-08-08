@@ -12,6 +12,11 @@ iyer.create = async (req, res) => {
         city,
         country,
         district,
+        countryName,
+        districtName,
+        stateName,
+        cityName,
+        areaName,
         language,
         mobileNumber,
         poojaCounts,
@@ -35,6 +40,11 @@ iyer.create = async (req, res) => {
         city,
         country,
         district,
+        countryName,
+        districtName,
+        stateName,
+        cityName,
+        areaName,
         language,
         mobileNumber,
         poojaCounts,
@@ -49,7 +59,7 @@ iyer.create = async (req, res) => {
         vendorId,
         address,
         pincode
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?)`;
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?)`;
 
       const values = [
         AlternateNumber,
@@ -58,6 +68,11 @@ iyer.create = async (req, res) => {
         city,
         country,
         district,
+        countryName,
+        districtName,
+        stateName,
+        cityName,
+        areaName,
         JSON.stringify(language),
         mobileNumber,
         poojaCounts,
@@ -156,6 +171,11 @@ iyer.update = async (req, res) => {
         IFSCCode,
         BankName,
         branch,
+        countryName,
+        districtName,
+        stateName,
+        cityName,
+        areaName,
       } = req.body;
 
       if (!vendorId) {
@@ -268,6 +288,23 @@ iyer.update = async (req, res) => {
       if (branch !== undefined) {
         fieldUpdates.push("branch = ?");
         values.push(branch);
+      }
+      if (countryName !== undefined) {
+        fieldUpdates.push("countryName = ?");
+        values.push(countryName);
+      }
+      if (districtName !== undefined) {
+        fieldUpdates.push("districtName = ?");
+        values.push(districtName);
+      }  if (stateName !== undefined) {
+        fieldUpdates.push("stateName = ?");
+        values.push(stateName);
+      }  if (cityName !== undefined) {
+        fieldUpdates.push("cityName = ?");
+        values.push(cityName);
+      }  if (areaName !== undefined) {
+        fieldUpdates.push("areaName = ?");
+        values.push(areaName);
       }
 
       sql += fieldUpdates.join(", ") + " WHERE vendorId = ?";

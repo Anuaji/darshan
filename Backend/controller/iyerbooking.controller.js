@@ -19,6 +19,7 @@ iyerBooking.bookIyer = async (req) => {
         contact,
         email,
         address,
+        approved = 0,
       } = req.body;
 
       const formatDate = (timestamp) => {
@@ -38,8 +39,8 @@ iyerBooking.bookIyer = async (req) => {
       const sql = `
         INSERT INTO iyer_booking (
           user_id, vendor_id, servicetype, special_instruction, date, start_time, end_time,
-          place, name, contact, email, address
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          place, name, contact, email, address,approved
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)
       `;
 
       const values = [
@@ -55,6 +56,7 @@ iyerBooking.bookIyer = async (req) => {
         contact,
         email,
         address,
+        approved,
       ];
 
       dbConfig.query(sql, values, (err, result) => {
@@ -98,6 +100,7 @@ iyerBooking.getBookingsByUserId = async (userId) => {
     });
   });
 };
+
 iyerBooking.getBookingsByVendorId = async (vendorId) => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM iyer_booking WHERE vendor_id = ?`;
@@ -126,6 +129,43 @@ iyerBooking.deleteIyer = async (req, res) => {
   } catch (err) {
     return reject(err);
   }
+};
+
+iyerBooking.updateApproval = async (req, res) => {
+  console.log("req.body :>> ", req.body);
+  return new Promise((resolve, reject) => {
+    try {
+      const { id } = req.params;
+      1;
+      console.log("booki :>> ", id);
+      if (!id) {
+        return reject({ status: 400, message: "Booking ID is required" });
+      }
+
+      const sql = `
+        UPDATE iyer_booking
+        SET approved = 1
+        WHERE id = ?
+      `;
+
+      dbConfig.query(sql, [id], (err, result) => {
+        if (err) {
+          console.log("err!", err);
+          return reject({ status: 500, message: "Error occurred" });
+        } else if (result.affectedRows === 0) {
+          return reject({ status: 404, message: "Booking not found" });
+        } else {
+          return resolve({
+            status: 200,
+            message: "Booking approved successfully",
+          });
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      return reject({ status: 500, message: "Internal Server Error" });
+    }
+  });
 };
 
 iyerBooking.getallIyerBookingWithApprove = async () => {

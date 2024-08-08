@@ -156,13 +156,11 @@ const Inauspicious = require("./router/Inauspiciousevent");
 const guidelist = require("./router/guidelist.router");
 const guide_guidelist = require("./router/guide_guidelist.router");
 const yatraBookingRouters = require("./router/YatraBooking.router");
-const AddNewTemple = require("./router/AddNewTempleRouter");
-
-
 const hotelBookingRouters = require("./router/HotelBooking.router");
 const subGroupRouters = require("./router/subGroupRouter");
 const DilapidateTempleRouters = require("./router/DilapateTemple.router");
-
+const godList = require("./router/godList.router");
+const TempleNew = require("./router/TempleCreate.router");
 app.get("/logout", (req, res) => {
   res
     .cookie("jwt", "", { maxAge: 1, httpOnly: true })
@@ -174,6 +172,7 @@ app.use("/course", trainerCourse);
 app.use("/about", about);
 app.use("/constantname", constantname);
 app.use("/temple", Temple);
+app.use("/templecreate", TempleNew);
 app.use("/Constants", Constants);
 app.use("/Temple_Event", Temple_Event);
 app.use("/main_god", main_god);
@@ -221,6 +220,7 @@ app.use("/subCategoriesList", subCategoriesListRouter);
 app.use("/iyer", iyerRouter);
 app.use("/astrologer", astrologerRouter);
 app.use("/trainer", trainerRouter);
+app.use("/godList", godList);
 app.use("/iyerbooking", iyerbookingRouter);
 app.use("/yatrabook", yatraBookingRouters);
 app.use("/roombook", hotelBookingRouters);
@@ -254,7 +254,6 @@ app.use("/community", communityRouter);
 app.use("/login", loginRouter);
 app.use("/communityTemple", communityTempleRouter);
 app.use("/yatraBooking", yatraBookingRouter);
-app.use("/AddNewTemple",AddNewTemple );
 
 // app.use("/roomBooking", roomBookingRouter);
 

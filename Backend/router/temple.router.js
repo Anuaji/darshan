@@ -4,6 +4,7 @@ const dbConfig = require("../database/config");
 
 // Require the controllers WHICH WE DID NOT CREATE YET!!
 const temple_controller = require("../controller/temple.controller");
+const { default: templeCreate } = require("../controller/TempleCreate");
 
 //Url for home page
 router.get("/getTemple", temple_controller.TempleNameID);
@@ -124,19 +125,25 @@ router.get("/getAdditionalById/:id", (req, res) => {
       executeQuery(query2),
       executeQuery(query3),
       executeQuery(query4),
-     
     ])
-      .then(([pariharamsResult, mainGodsResult, festivalResult, additionalDataResult]) => {
-        res.json({
-          status: "Success",
-          result: {
-            pariharam: pariharamsResult,
-            otherGods: mainGodsResult,
-            festival: festivalResult,
-            additionalData: additionalDataResult,
-          },
-        });
-      })
+      .then(
+        ([
+          pariharamsResult,
+          mainGodsResult,
+          festivalResult,
+          additionalDataResult,
+        ]) => {
+          res.json({
+            status: "Success",
+            result: {
+              pariharam: pariharamsResult,
+              otherGods: mainGodsResult,
+              festival: festivalResult,
+              additionalData: additionalDataResult,
+            },
+          });
+        }
+      )
       .catch((err) => {
         res.json({ status: "Failed", error: err.message });
       });
