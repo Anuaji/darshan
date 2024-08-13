@@ -3,7 +3,7 @@ const dbConfig = require("../database/config");
 const templeCreate = {};
 
 templeCreate.TempleNewCreate = async (req) => {
-  console.log("req.body :>> ", req.body);
+  console.log("req.bodysssss :>> ", req.body);
 
   return new Promise((resolve, reject) => {
     try {
