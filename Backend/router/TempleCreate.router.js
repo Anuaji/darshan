@@ -31,5 +31,14 @@ router.get("/templebyid/:id", async (req, res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
+router.get("/templefilter", async (req, res) => {
+  try {
+    const templeData = await templeCreate.filterTempleData(req);
+    res.json({ success: true, data: templeData });
+  } catch (error) {
+    console.error("Error fetching temple data:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
 
 module.exports = router;

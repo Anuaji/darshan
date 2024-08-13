@@ -64,6 +64,11 @@ templeCreate.TempleNewCreate = async (req) => {
         stateName,
         districtName,
         cityName,
+        main_god_name,
+        speciality_name,
+        grouptable_name,
+        pariharam_id,
+        pariharam_name,
       } = req.body;
 
       const getMaxTempleIdSQL =
@@ -87,8 +92,8 @@ templeCreate.TempleNewCreate = async (req) => {
          thalavirutcham, prayer, tourist_id, functionsInsideTemple, annathanam, chariotTemple, donation, 
          inchargeName, phone, temple_year, control_by, morningTime, eveningTime, aagamam, vimanaType, 
          PadalPettrathu, sanctorum, heritage, centuryBelong, verses, kingPeriod, 
-         poetSaints, youtubeUrl,poojaField,subGodNames,tankInformation,Sculpturedetails,MuralDetail,routes,amenities,main_image,countryName,stateName,districtName,cityName )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+         poetSaints, youtubeUrl,poojaField,subGodNames,tankInformation,Sculpturedetails,MuralDetail,routes,amenities,main_image,countryName,stateName,districtName,cityName,main_god_name,speciality_name,grouptable_name,pariharam_id,pariharam_name )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
 
       `;
         const values = [
@@ -149,6 +154,11 @@ templeCreate.TempleNewCreate = async (req) => {
           stateName,
           districtName,
           cityName,
+          main_god_name,
+          JSON.stringify(speciality_name),
+          grouptable_name,
+          JSON.stringify(pariharam_id),
+          JSON.stringify(pariharam_name),
           // JSON.stringify(req.body.subImages),
           // videoFile_path,
         ];
@@ -206,6 +216,129 @@ templeCreate.getTempleById = async (id) => {
       }
       return resolve(results);
     });
+  });
+};
+
+templeCreate.filterTempleData = async (req) => {
+  console.log("req.query :>> ", req.query);
+
+  return new Promise((resolve, reject) => {
+    try {
+      const {
+        country_id,
+        state_id,
+        district_id,
+        city_id,
+        areaName,
+        main_god_id,
+        speciality_id,
+        grouptable_id,pariharam_id
+      } = req.query;
+
+      const conditions = [];
+      const params = [];
+
+      if (country_id) {
+        conditions.push("country_id = ?");
+        params.push(country_id);
+      }
+      if (state_id) {
+        conditions.push("state_id = ?");
+        params.push(state_id);
+      }
+      if (district_id) {
+        conditions.push("district_id = ?");
+        params.push(district_id);
+      }
+      if (city_id) {
+        conditions.push("city_id = ?");
+        params.push(city_id);
+      }
+      if (areaName) {
+        conditions.push("area_id = ?");
+        params.push(areaName);
+      }
+      if (main_god_id) {
+        conditions.push("main_god_id = ?");
+        params.push(main_god_id);
+      }
+
+      if (speciality_id) {
+        let specialityIds;
+        try {
+          specialityIds = JSON.parse(speciality_id);
+        } catch (e) {
+          return reject({
+            status: 400,
+            message: "Invalid speciality_id format",
+            error: e,
+          });
+        }
+
+        if (!Array.isArray(specialityIds)) {
+          specialityIds = [specialityIds];
+        }
+
+        const specialityConditions = specialityIds.map(
+          (id) => `JSON_CONTAINS(speciality_id, CAST(? AS JSON), '$')`
+        );
+        conditions.push(`(${specialityConditions.join(" OR ")})`);
+        params.push(...specialityIds.map((id) => JSON.stringify(id)));
+      }
+
+      if (grouptable_id) {
+        conditions.push("grouptable_id = ?");
+        params.push(grouptable_id);
+      }
+      if (pariharam_id) {
+        let pariharamIds;
+        try {
+          pariharamIds = JSON.parse(pariharam_id);
+        } catch (e) {
+          return reject({
+            status: 400,
+            message: "Invalid pariharam_id format",
+            error: e,
+          });
+        }
+
+        if (!Array.isArray(pariharamIds)) {
+          pariharamIds = [pariharamIds];
+        }
+
+        const pariharamConditions = pariharamIds.map(
+          (id) => `JSON_CONTAINS(pariharam_id, CAST(? AS JSON), '$')`
+        );
+        conditions.push(`(${pariharamConditions.join(" OR ")})`);
+        params.push(...pariharamIds.map((id) => JSON.stringify(id)));
+      }
+
+      let sql = "SELECT * FROM temple_data";
+
+      if (conditions.length > 0) {
+        sql += " WHERE " + conditions.join(" AND ");
+      }
+
+      dbConfig.query(sql, params, (err, result) => {
+        if (err) {
+          console.log("Error fetching temple data:", err);
+          return reject({
+            status: 500,
+            message: "Error occurred",
+            error: err,
+          });
+        } else {
+          return resolve(result);
+        }
+      });
+    } catch (e) {
+      console.log("Error in filterTempleData:", e);
+      return reject({
+        status: 500,
+        message: "Internal Server Error",
+        error: e,
+      });
+    }
   });
 };
 

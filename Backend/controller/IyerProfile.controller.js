@@ -32,7 +32,7 @@ iyer.create = async (req, res) => {
         address,
         pincode,
       } = req.body;
-
+      console.log("req.body :>> ", req.body);
       const sql = `INSERT INTO iyerprofile (
         AlternateNumber,
         aadharNumber,
@@ -176,7 +176,9 @@ iyer.update = async (req, res) => {
         stateName,
         cityName,
         areaName,
+        available_dates,
       } = req.body;
+      console.log("req.body :>> ", req.body);
 
       if (!vendorId) {
         return reject({ status: 400, message: "Vendor ID is required" });
@@ -296,15 +298,22 @@ iyer.update = async (req, res) => {
       if (districtName !== undefined) {
         fieldUpdates.push("districtName = ?");
         values.push(districtName);
-      }  if (stateName !== undefined) {
+      }
+      if (stateName !== undefined) {
         fieldUpdates.push("stateName = ?");
         values.push(stateName);
-      }  if (cityName !== undefined) {
+      }
+      if (cityName !== undefined) {
         fieldUpdates.push("cityName = ?");
         values.push(cityName);
-      }  if (areaName !== undefined) {
+      }
+      if (areaName !== undefined) {
         fieldUpdates.push("areaName = ?");
         values.push(areaName);
+      }
+      if (available_dates !== undefined) {
+        fieldUpdates.push("available_dates = ?");
+        values.push(JSON.stringify(available_dates)); // Convert array to JSON string
       }
 
       sql += fieldUpdates.join(", ") + " WHERE vendorId = ?";
